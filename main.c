@@ -16,8 +16,8 @@ int main() {
     bool exit = false;
     while(!exit){
         char *c = fgets(command_string, nbytes, stdin);
-        int *num_tokens;
-        char **command_tokens = tokenizeString(command_string, num_tokens);
+        int num_tokens = 0;
+        char **command_tokens = tokenizeString(command_string, &num_tokens);
         if(!strcmp(command_tokens[0], exit_string)){
             exit = true;
         }
@@ -25,7 +25,7 @@ int main() {
     return 0;
 }
 
-char** tokenizeString(char* command_string, int * num_tokens){
+char** tokenizeString(char *command_string, int *num_tokens){
     char** return_pointer = NULL;
     int tokens = 0;
     char *token;
