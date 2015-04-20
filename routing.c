@@ -1,13 +1,18 @@
 #include <stdbool.h>
 #include <string.h>
-#include "routing.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <dirent.h>
+#include "routing.h"
 
-bool route_command(struct string_array parameters){
-    char exit_string[] = "exit\n";
-    if(!strcmp(parameters.array[0], exit_string)){
+bool route_command(struct string_array parameters, DIR *current_direction){
+    if(!strcmp(parameters.array[0], "exit\n") || !strcmp(parameters.array[0], "exit")){
         return true;
+    }
+    else if(!strcmp(parameters.array[0], "cd")){
+        parameters.array++;
+        parameters.size--;
+        navigate_file_system(parameters, current_direction);
     }
     return false;
 }
