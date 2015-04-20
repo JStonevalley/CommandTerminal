@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <errno.h>
 #include "routing.h"
 
 bool route_command(struct string_array parameters, char **current_direction){
@@ -16,8 +18,13 @@ bool route_command(struct string_array parameters, char **current_direction){
         if (!strcmp(first_parameter, "cd")) {
             cd(parameters, current_direction);
         }
-        else if (!strcmp(first_parameter, "ls\n")) {
+        /*else if (!strcmp(first_parameter, "ls\n")) {
             ls(parameters, current_direction);
+        }*/
+        else{
+            if (execv(first_parameter, parameters.array) == -1) {
+                printf("Failed to start: %s\n", strerror(errno));
+            }
         }
     }
     return false;
