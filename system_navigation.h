@@ -6,4 +6,6 @@
 
 #endif
 
-void navigate_file_system(struct string_array parameters, DIR *current_dir);
+void cd(struct string_array parameters, char **current_dir);
+
+void ls(struct string_array parameters, char **current_dir);

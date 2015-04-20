@@ -6,6 +6,6 @@
 
 #endif
 
-struct string_array tokenizeString(char* command_string);
+struct string_array tokenizeString(char *command_string);
 
-bool route_command(struct string_array parameters, DIR *current_location);
+bool route_command(struct string_array parameters, char **current_location);

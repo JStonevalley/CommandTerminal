@@ -2,17 +2,23 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <dirent.h>
 #include "routing.h"
 
-bool route_command(struct string_array parameters, DIR *current_direction){
-    if(!strcmp(parameters.array[0], "exit\n") || !strcmp(parameters.array[0], "exit")){
-        return true;
-    }
-    else if(!strcmp(parameters.array[0], "cd")){
-        parameters.array++;
-        parameters.size--;
-        navigate_file_system(parameters, current_direction);
+bool route_command(struct string_array parameters, char **current_direction){
+    if (parameters.size > 0) {
+        if (!strcmp(parameters.array[0], "exit\n") || !strcmp(parameters.array[0], "exit")) {
+            return true;
+        }
+        else if (!strcmp(parameters.array[0], "cd")) {
+            parameters.array++;
+            parameters.size--;
+            cd(parameters, current_direction);
+        }
+        else if (!strcmp(parameters.array[0], "ls\n")) {
+            parameters.array++;
+            parameters.size--;
+            ls(parameters, current_direction);
+        }
     }
     return false;
 }
