@@ -5,18 +5,18 @@
 #include "routing.h"
 
 bool route_command(struct string_array parameters, char **current_direction){
-    if (parameters.size > 0) {
-        if (!strcmp(parameters.array[0], "exit\n") || !strcmp(parameters.array[0], "exit")) {
+    char *first_parameter;
+    if (parameters.size > 0){
+        first_parameter = parameters.array[0];
+        if (!strcmp(first_parameter, "exit\n") || !strcmp(parameters.array[0], "exit")) {
             return true;
         }
-        else if (!strcmp(parameters.array[0], "cd")) {
-            parameters.array++;
-            parameters.size--;
+        parameters.array++;
+        parameters.size--;
+        if (!strcmp(first_parameter, "cd")) {
             cd(parameters, current_direction);
         }
-        else if (!strcmp(parameters.array[0], "ls\n")) {
-            parameters.array++;
-            parameters.size--;
+        else if (!strcmp(first_parameter, "ls\n")) {
             ls(parameters, current_direction);
         }
     }
