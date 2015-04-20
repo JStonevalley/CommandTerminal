@@ -4,4 +4,4 @@ project(CommandTerminal)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pedantic -Wall -ansi -O4")
 
 set(SOURCE_FILES main.c)
-add_executable(CommandTerminal ${SOURCE_FILES})
+add_executable(CommandTerminal ${SOURCE_FILES} structs.h routing.h routing.c main.h)

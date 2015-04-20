@@ -1,0 +1,4 @@
+#ifndef COMMANDTERMINAL_MAIN_H
+#define COMMANDTERMINAL_MAIN_H
+
+#endif
