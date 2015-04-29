@@ -14,19 +14,14 @@ bool route_command(struct string_array parameters, char **current_direction){
 
     if (parameters.size > 0){
         first_parameter = parameters.array[0];
-        if (!strcmp(first_parameter, "exit\n") || !strcmp(parameters.array[0], "exit")) {
+        if (!strcmp(parameters.array[0], "exit")) {
             return true;
         }
         if (!strcmp(first_parameter, "cd")) {
             parameters.array++;
             parameters.size--;
-            cd(parameters, current_direction);
+            cd(parameters);
         }
-        /*else if (!strcmp(first_parameter, "ls")) {
-            parameters.array++;
-            parameters.size--;
-            ls(parameters, current_direction);
-        }*/
         else {
             if (parameters.array[parameters.size - 1][strlen(parameters.array[parameters.size - 1]) - 1] == '&'){
                 parameters.array[parameters.size - 1] = NULL;

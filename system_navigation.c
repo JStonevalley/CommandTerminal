@@ -4,11 +4,8 @@
 #include <errno.h>
 #include "system_navigation.h"
 
-void cd(struct string_array parameters, char **current_dir) {
+void cd(struct string_array parameters) {
     if (parameters.size > 0) {
-        if (parameters.array[0][strlen(parameters.array[0]) - 1] == '\n') {
-            parameters.array[0][strlen(parameters.array[0]) - 1] = '\0';
-        }
         if (chdir(parameters.array[0]) == -1) {
             printf("Directory change failed: %s\n", strerror(errno));
         }

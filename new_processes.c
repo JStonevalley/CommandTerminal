@@ -20,7 +20,7 @@ void foreground_process(char *file, char **args){
 
 void background_process(char *file, char **args){
     pid_t pid;
-    int status;
+/*    int status; */
 
     if ((pid = fork()) == 0) {
         if (execvp(file, args) == -1) {
