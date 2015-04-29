@@ -8,4 +8,4 @@
 
 struct string_array tokenizeString(char *command_string);
 
-bool route_command(struct string_array parameters, char **current_location);
+bool route_command(struct string_array parameters);

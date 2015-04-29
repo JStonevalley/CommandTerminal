@@ -9,32 +9,29 @@
 #include "routing.h"
 #include "new_processes.h"
 
-bool route_command(struct string_array parameters, char **current_direction){
+bool route_command(struct string_array parameters){
     char *first_parameter;
+    bool exit;
+    exit = false;
 
     if (parameters.size > 0){
         first_parameter = parameters.array[0];
-        if (!strcmp(parameters.array[0], "exit")) {
-            return true;
-        }
-        if (!strcmp(first_parameter, "cd")) {
+        if (!strcmp(first_parameter, "exit")) {
+            exit = true;
+        } else if (!strcmp(first_parameter, "cd")) {
             parameters.array++;
             parameters.size--;
             cd(parameters);
-        }
-        else {
-            if (parameters.array[parameters.size - 1][strlen(parameters.array[parameters.size - 1]) - 1] == '&'){
-                parameters.array[parameters.size - 1] = NULL;
-                parameters.size--;
-
-                background_process(first_parameter, parameters.array);
-            }
-            else {
-                foreground_process(first_parameter, parameters.array);
-            }
+        } else if (parameters.array[parameters.size - 1][strlen(parameters.array[parameters.size - 1]) - 1] == '&') {
+            parameters.array[parameters.size - 1] = NULL;
+            parameters.size--;
+            background_process(first_parameter, parameters.array);
+        } else {
+            foreground_process(first_parameter, parameters.array);
         }
     }
-    return false;
+
+    return exit;
 }
 
 struct string_array tokenizeString(char *command_string){
@@ -47,7 +44,7 @@ struct string_array tokenizeString(char *command_string){
     while (token != NULL){
         string_tokens = realloc(string_tokens, sizeof(char*) * (++tokens));
         string_tokens[tokens - 1] = token;
-        puts(token);
+        /*puts(token);*/
         token = strtok(NULL, " ");
     }
     if (string_tokens != NULL && string_tokens[tokens - 1][strlen(string_tokens[tokens - 1]) - 1] == '\n') {
