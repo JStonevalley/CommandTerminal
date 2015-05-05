@@ -30,7 +30,7 @@ bool route_command(struct string_array parameters){
             foreground_process(first_parameter, parameters.array);
         }
     }
-
+    
     return exit;
 }
 

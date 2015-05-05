@@ -19,11 +19,7 @@ int main() {
         printf("> ");
         c = fgets(command_string, nbytes, stdin);
         tokens = tokenizeString(command_string);
-        puts(tokens.array[0]);
-        printf("%d\n", tokens.size);
         exit = route_command(tokens);
-        printf(exit ? "true\n" : "false\n");
-
     }
     return 0;
 }
