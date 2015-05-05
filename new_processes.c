@@ -4,17 +4,15 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <sys/times.h>
 #include <errno.h>
-#include <time.h>
+#include <sys/time.h>
 #include <sys/wait.h>
 #include "new_processes.h"
 
 void foreground_process(char *file, char **args){
     pid_t pid;
     int status;
-    struct timespec start, end;
-    uint64_t diff;
+    struct timeval  tv1, tv2;
 
     if ((pid = fork()) == 0) {
         /*  In child process */
@@ -24,13 +22,13 @@ void foreground_process(char *file, char **args){
         }
     } else {
         /* In parent process */
-        clock_gettime(CLOCK_MONOTONIC, &start); /* mark start time */
+        gettimeofday(&tv1, NULL); /* mark start time */
         waitpid(pid, &status, 0);
-        clock_gettime(CLOCK_MONOTONIC, &end);   /* mark the end time */
-        diff = end.tv_sec - start.tv_sec;
+        gettimeofday(&tv2, NULL); /* mark end time */
 
-        printf("Execution time was %f seconds for PID %d\n", ((double) time.tms_utime)/tics_per_second, pid);            
-
+        printf ("Total time = %f seconds\n",
+            (double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +
+            (double) (tv2.tv_sec - tv1.tv_sec));
     }
 }
 
