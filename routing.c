@@ -40,16 +40,14 @@ struct string_array tokenizeString(char *command_string){
     int tokens;
     char *token;
     tokens = 0;
-    token = strtok(command_string, " ");
+    token = strtok(command_string, " \n");
+
     while (token != NULL){
         string_tokens = realloc(string_tokens, sizeof(char*) * (++tokens));
         string_tokens[tokens - 1] = token;
-        /*puts(token);*/
-        token = strtok(NULL, " ");
+        token = strtok(NULL, " \n");
     }
-    if (string_tokens != NULL && string_tokens[tokens - 1][strlen(string_tokens[tokens - 1]) - 1] == '\n') {
-        string_tokens[tokens - 1][strlen(string_tokens[tokens - 1]) - 1] = '\0';
-    }
+
     string_tokens = realloc(string_tokens, sizeof(char*) * (tokens + 1));
     string_tokens[tokens] = NULL;
 

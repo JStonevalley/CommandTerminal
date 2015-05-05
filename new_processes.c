@@ -29,8 +29,13 @@ void background_process(char *file, char **args){
     /* int status; */
 
     if ((pid = fork()) == 0) {
+        /* In child process */
         if (execvp(file, args) == -1) {
             printf("Failed to start: %s\n", strerror(errno));
+            exit(1);
         }
+        exit(0);
+    } else {
+        /* Lalalalalala */
     }
 }
