@@ -15,6 +15,7 @@ void foreground_process(char *file, char **args){
         /*  In child process */
         if (execvp(file, args) == -1) {
             printf("Failed to start: %s\n", strerror(errno));
+            exit(1); /* Exit failiure */
         }
         exit(0); /* Kill child! */
     } else {
