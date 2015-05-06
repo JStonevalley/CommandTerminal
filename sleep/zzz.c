@@ -5,4 +5,5 @@ int main() {
   printf("Going to sleep\n");
   sleep(3);
   printf("Awake!\n");
+  return 0;
 }

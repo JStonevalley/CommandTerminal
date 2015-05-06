@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include "main.h"
 #include "routing.h"
+#include "signal_handler.h"
 
 int main() {
     bool exit;
@@ -10,6 +11,8 @@ int main() {
     char command_string[100];
     char *c;
     struct string_array tokens;
+
+    register_sig_handler();
 
     nbytes = 100;
     exit = false;
