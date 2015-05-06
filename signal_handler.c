@@ -1,3 +1,6 @@
+#define _XOPEN_SOURCE 500
+
+#include <sys/wait.h>
 #include <sys/signal.h>
 #include <signal.h>
 #include <stdio.h>
