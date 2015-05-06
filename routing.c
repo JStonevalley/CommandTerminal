@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "routing.h"
 #include "new_processes.h"
+#include "checkEnv.h"
 
 bool route_command(struct string_array parameters){
     char *first_parameter;
@@ -17,7 +18,11 @@ bool route_command(struct string_array parameters){
             parameters.array++;
             parameters.size--;
             cd(parameters);
-        } else if (parameters.array[parameters.size - 1][strlen(parameters.array[parameters.size - 1]) - 1] == '&') {
+        } else if (!strcmp(first_parameter, "checkEnv")) {
+            parameters.array++;
+            parameters.size--;
+            checkEnv();
+        }else if (parameters.array[parameters.size - 1][strlen(parameters.array[parameters.size - 1]) - 1] == '&') {
             parameters.array[parameters.size - 1] = NULL;
             parameters.size--;
             background_process(first_parameter, parameters.array);
