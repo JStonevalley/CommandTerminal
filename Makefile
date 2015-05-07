@@ -1,4 +1,4 @@
 SRC=$(wildcard *.c)
 
-shell: $(SRC)
+peel: $(SRC)
 	gcc -pedantic -Wall -ansi -O4 -o $@ $^

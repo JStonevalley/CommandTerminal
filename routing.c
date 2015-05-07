@@ -1,6 +1,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
+
 #include "routing.h"
 #include "new_processes.h"
 #include "check_env.h"
@@ -39,13 +41,29 @@ struct string_array tokenizeString(char *command_string){
     struct string_array array;
     int tokens;
     char *token;
+    char *prev_token = "";
+    
     tokens = 0;
     token = strtok(command_string, " \n");
 
     while (token != NULL){
         string_tokens = realloc(string_tokens, sizeof(char*) * (++tokens));
         string_tokens[tokens - 1] = token;
+        prev_token = token;
         token = strtok(NULL, " \n");
+    }
+
+    if (contains_ampersand(prev_token))
+    {
+        size_t length = strlen(prev_token);
+        if (length > 1) /* skip "&" */
+        {
+            prev_token[length - 1] = '\0';
+            string_tokens[tokens - 1] = prev_token;
+            /* put a & at the end */
+            string_tokens = realloc(string_tokens, sizeof(char*) * (++tokens));
+            string_tokens[tokens - 1] = "&";
+        }
     }
 
     string_tokens = realloc(string_tokens, sizeof(char*) * (tokens + 1));
@@ -54,4 +72,18 @@ struct string_array tokenizeString(char *command_string){
     array.size = tokens;
     array.array = string_tokens;
     return array;
+}
+
+bool contains_ampersand(char *string) {
+    int length = strlen(string);
+    int i;
+
+    for (i = 0; i < length; ++i)
+    {
+        if (string[i] == '&' && string[i+1] == '\0')
+        {
+            return true;
+        }
+    }
+    return false;
 }
