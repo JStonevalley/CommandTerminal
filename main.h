@@ -3,3 +3,5 @@
 
 #endif
 
+int main();
+void type_prompt();

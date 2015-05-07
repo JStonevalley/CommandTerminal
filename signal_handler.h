@@ -4,4 +4,6 @@
 #endif
 
 void register_sig_handler();
+void register_ctrlc_handler();
 void handle_sigchld(int sig);
+void handle_ctrlc(int sig);

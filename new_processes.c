@@ -12,7 +12,7 @@
 void foreground_process(char *file, char **args){
     pid_t pid;
     int status;
-    struct timeval  tv1, tv2;
+    struct timeval tv1, tv2;
 
     if ((pid = fork()) == 0) {
         /*  In child process */
