@@ -23,7 +23,7 @@ bool route_command(struct string_array parameters){
         } else if (!strcmp(first_parameter, "checkEnv")) {
             parameters.array++;
             parameters.size--;
-            checkEnv();
+            checkEnv(parameters);
         }else if (parameters.array[parameters.size - 1][strlen(parameters.array[parameters.size - 1]) - 1] == '&') {
             parameters.array[parameters.size - 1] = NULL;
             parameters.size--;
