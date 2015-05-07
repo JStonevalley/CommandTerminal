@@ -3,8 +3,6 @@
 #ifndef COMMANDTERMINAL_CHECKENV_H
 #define COMMANDTERMINAL_CHECKENV_H
 
-#endif
-
 typedef int rw;
 #define READ 0
 #define WRITE 1
@@ -16,3 +14,5 @@ void sort(int inpipe[2], int outpipe[2]);
 void pager(int inpipe[2]);
 void close_pipes();
 void initiate_pipes(int number_of_pipes);
+
+#endif

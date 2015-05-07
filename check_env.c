@@ -123,5 +123,3 @@ void initiate_pipes(int number_of_pipes) {
     }
     pipes[6] = -1;
 }
-
-
