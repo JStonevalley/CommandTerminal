@@ -11,6 +11,7 @@ typedef int rw;
 
 bool checkEnv(struct string_array parameters);
 void printenv(int outpipe[2]);
+void grep (int inpipe[2], int outpipe[2], char** arguments);
 void sort(int inpipe[2], int outpipe[2]);
 void pager(int inpipe[2]);
 void close_pipes();

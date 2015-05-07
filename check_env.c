@@ -11,28 +11,44 @@
 int pipes[7];
 
 bool checkEnv(struct string_array parameters){
-    pid_t printenv_pid, sort_pid;
-    int status;
-    if (parameters.size > 0){
+    pid_t printenv_pid, sort_pid, grep_pid;
+    int status, read_pipe, write_pipe;
+    read_pipe = -2,
+    write_pipe = 0;
+    if (parameters.size > 1){
         initiate_pipes(3);
     }
     else{
         initiate_pipes(2);
     }
     if ((printenv_pid = fork()) == 0) {
-        printenv(&pipes[0]);
+        printenv(&pipes[write_pipe]);
     }
     else {
-        if ((sort_pid = fork()) == 0) {
-            sort(&pipes[0], &pipes[2]);
+        if(parameters.size > 1 && (grep_pid = fork()) == 0){
+            read_pipe += 2;
+            write_pipe += 2;
+            grep(&pipes[read_pipe], &pipes[write_pipe], parameters.array);
         }
         else {
-            if (printenv_pid != 0 && sort_pid != 0) {
-               pager(&pipes[2]);
+            if ((sort_pid = fork()) == 0) {
+                read_pipe += 2;
+                write_pipe += 2;
+                sort(&pipes[read_pipe], &pipes[write_pipe]);
+            }
+            else {
+                if (printenv_pid != 0 && sort_pid != 0) {
+                    read_pipe += 2;
+                    write_pipe += 2;
+                    pager(&pipes[read_pipe]);
+                }
             }
         }
     }
     close_pipes();
+    if (parameters.size > 1) {
+        wait(&status);
+    }
     wait(&status);
     wait(&status);
     return true;
@@ -43,6 +59,16 @@ void printenv(int outpipe[2]){
     close_pipes();
     if (execlp("printenv", "printenv", NULL) == -1) {
         printf("Failed to start printenv: %s\n", strerror(errno));
+        exit(1);
+    }
+}
+
+void grep (int inpipe[2], int outpipe[2], char** arguments){
+    dup2(inpipe[READ], STDIN_FILENO);
+    dup2(outpipe[WRITE], STDOUT_FILENO);
+    close_pipes();
+    if (execvp("grep", arguments) == -1) {
+        printf("Failed to start sort: %s\n", strerror(errno));
         exit(1);
     }
 }
