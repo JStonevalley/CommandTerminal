@@ -1,7 +1,3 @@
-//
-// Created by jonas on 2015-05-06.
-//
-
 #include <sys/types.h>
 #include <stdbool.h>
 #include <unistd.h>
@@ -10,11 +6,11 @@
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "checkEnv.h"
+#include "check_env.h"
 
 bool checkEnv(){
-    pid_t printenv_pid, sort_pid;
-    int status, pipa[2];
+    pid_t printenv_pid;
+    int pipa[2];
     if (-1 == pipe(pipa)){
         return false;
     }
@@ -35,4 +31,5 @@ bool checkEnv(){
             exit(1);
         }
     }
+    return true;
 }

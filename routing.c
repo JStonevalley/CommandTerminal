@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "routing.h"
 #include "new_processes.h"
-#include "checkEnv.h"
+#include "check_env.h"
 
 bool route_command(struct string_array parameters){
     char *first_parameter;
