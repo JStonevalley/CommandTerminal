@@ -7,28 +7,34 @@
 #include <stdlib.h>
 #include "signal_handler.h"
 
-/* register a signal handler that listens SIGCHLD & SIGINT */
+/* register a signal handler that listens to signals from children */
 void register_sig_handler() {
     struct sigaction sa;
-    sa.sa_handler = &sig_handler;
+    sa.sa_handler = &handle_sigchld;
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = SA_RESTART | SA_NOCLDSTOP;
 
-    sigaction(SIGINT, &sa, 0);
-    sigaction(SIGCHLD, &sa, 0);
+    if (sigaction(SIGCHLD, &sa, 0) == -1) {
+        perror(0);
+        exit(1);
+    }
 }
 
-void sig_handler(int sig) {
+/* register a signal handler that listens to interuption signals (CTRL+C) */
+void register_ctrlc_handler() {
+    struct sigaction sa;
+    sa.sa_handler = &handle_ctrlc;
+    sigaction(SIGINT, &sa, NULL);
+}
+
+/* wait for children and print out pid */
+void handle_sigchld(int sig) {
     pid_t pid;
-    
-    switch(sig) {
-        case SIGINT: /* ignore CTRL+X */
-            printf("\n");
-            break;
-        case SIGCHLD: /* wait for children and print out pid */
-            while ((pid = waitpid((pid_t)(-1), 0, WNOHANG)) > 0) {
-                printf("[%d] Done!\n", pid);
-            }
-            break;
-    }   
+    while ((pid = waitpid((pid_t)(-1), 0, WNOHANG)) > 0) {
+        printf("[%d] Done!\n", pid);
+    }
+}
+
+void handle_ctrlc(int sig) {
+    printf("\n");
 }

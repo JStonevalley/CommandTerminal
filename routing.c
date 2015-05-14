@@ -26,7 +26,6 @@ bool route_command(char *args[], int size, bool background){
             foreground_process(first_arg, args);
         }
     }
-    
     return exit;
 }
 

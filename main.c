@@ -12,10 +12,11 @@ int main() {
 	int nbytes;
 	char input[100];
 	char *args[10];
-	int size = 0;
+	int size;
 	bool background = false;
 	bool POLLING = true;
 
+	register_ctrlc_handler();
 	if (!POLLING) {
 		register_sig_handler();
 	}
@@ -27,6 +28,7 @@ int main() {
 		if (POLLING) {
 			poll_background();
 		}
+		input[0] = '\0';
 		type_prompt();
 		fgets(input, nbytes, stdin);
 		tokenize_string(input, args, &size, &background);

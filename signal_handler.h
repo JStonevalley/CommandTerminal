@@ -2,6 +2,8 @@
 #define COMMANDTERMINAL_SIGNAL_HANDLER_H
 
 void register_sig_handler();
-void sig_handler(int sig);
+void register_ctrlc_handler();
+void handle_sigchld(int sig);
+void handle_ctrlc(int sig);
 
 #endif
