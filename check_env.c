@@ -17,6 +17,8 @@ bool checkEnv(struct string_array parameters){
     write_pipe = 0;
     if (parameters.size > 1){
         initiate_pipes(3);
+        puts(parameters.array[0]);
+        puts(parameters.array[1]);
     }
     else{
         initiate_pipes(2);
@@ -25,12 +27,12 @@ bool checkEnv(struct string_array parameters){
         printenv(&pipes[write_pipe]);
     }
     else {
-        if(parameters.size > 1 && (grep_pid = fork()) == 0){
+        /*if(parameters.size > 1 && (grep_pid = fork()) == 0){
             read_pipe += 2;
             write_pipe += 2;
             grep(&pipes[read_pipe], &pipes[write_pipe], parameters.array);
         }
-        else {
+        else {*/
             if ((sort_pid = fork()) == 0) {
                 read_pipe += 2;
                 write_pipe += 2;
@@ -41,22 +43,20 @@ bool checkEnv(struct string_array parameters){
                     read_pipe += 2;
                     write_pipe += 2;
                     pager(&pipes[read_pipe]);
+                    fprintf(stderr, "started pager");
+                    waitpid(printenv_pid, &status, 0);
+                    waitpid(sort_pid, &status, 0);
                 }
             }
-        }
+        /*}*/
     }
-    close_pipes();
-    if (parameters.size > 1) {
-        wait(&status);
-    }
-    wait(&status);
-    wait(&status);
     return true;
 }
 
 void printenv(int outpipe[2]){
     dup2(outpipe[WRITE], STDOUT_FILENO);
-    close_pipes();
+    /*close_pipes();*/
+    fprintf(stderr, "started printenv");
     if (execlp("printenv", "printenv", NULL) == -1) {
         printf("Failed to start printenv: %s\n", strerror(errno));
         exit(1);
@@ -67,8 +67,9 @@ void grep (int inpipe[2], int outpipe[2], char** arguments){
     dup2(inpipe[READ], STDIN_FILENO);
     dup2(outpipe[WRITE], STDOUT_FILENO);
     close_pipes();
+    fprintf(stderr, "started sort");
     if (execvp("grep", arguments) == -1) {
-        printf("Failed to start sort: %s\n", strerror(errno));
+        fprintf(stderr, "Failed to start sort: %s\n", strerror(errno));
         exit(1);
     }
 }
@@ -106,15 +107,18 @@ void initiate_pipes(int number_of_pipes) {
     if (-1 == pipe(pipes)){
         pipes[0] = -1;
         pipes[1] = -1;
+        fprintf(stderr, "Pipe init failed");
     }
     if (-1 == pipe(pipes + 2)){
         pipes[2] = -1;
         pipes[3] = -1;
+        fprintf(stderr, "Pipe init failed");
     }
     if (number_of_pipes == 3){
         if (-1 == pipe(pipes + 4)){
             pipes[4] = -1;
             pipes[5] = -1;
+            fprintf(stderr, "Pipe init failed");
         }
     }
     else{
