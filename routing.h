@@ -9,5 +9,3 @@ bool route_command(char *args[], int size, bool background);
 bool contains_ampersand(char *args[], int size);
 
 #endif
-
-
