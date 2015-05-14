@@ -14,20 +14,19 @@ int main() {
 	char *args[10];
 	int size;
 	bool background = false;
-	bool POLLING = true;
 
 	register_ctrlc_handler();
-	if (!POLLING) {
+	#if SIDGET == 1
 		register_sig_handler();
-	}
-
+	#endif
+	
 	nbytes = 100;
 	exit = false;
 
 	while(!exit){
-		if (POLLING) {
+		#if SIDGET != 1
 			poll_background();
-		}
+		#endif
 		input[0] = '\0';
 		type_prompt();
 		fgets(input, nbytes, stdin);
