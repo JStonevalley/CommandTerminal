@@ -14,5 +14,6 @@ void sort(int inpipe[2], int outpipe[2]);
 void pager(int inpipe[2]);
 void close_pipes();
 void initiate_pipes(int number_of_pipes);
+void increment_pipes(int *read_pipe, int *write_pipe);
 
 #endif

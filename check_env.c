@@ -11,7 +11,7 @@
 int pipes[7];
 
 bool checkEnv(struct string_array parameters){
-    pid_t printenv_pid, sort_pid, grep_pid;
+    pid_t printenv_pid, grep_pid, sort_pid, pager_pid;
     int status, read_pipe, write_pipe;
     read_pipe = -2,
     write_pipe = 0;
@@ -23,40 +23,45 @@ bool checkEnv(struct string_array parameters){
     else{
         initiate_pipes(2);
     }
+
     if ((printenv_pid = fork()) == 0) {
         printenv(&pipes[write_pipe]);
     }
-    else {
-        /*if(parameters.size > 1 && (grep_pid = fork()) == 0){
-            read_pipe += 2;
-            write_pipe += 2;
-            grep(&pipes[read_pipe], &pipes[write_pipe], parameters.array);
-        }
-        else {*/
-            if ((sort_pid = fork()) == 0) {
-                read_pipe += 2;
-                write_pipe += 2;
-                sort(&pipes[read_pipe], &pipes[write_pipe]);
-            }
-            else {
-                if (printenv_pid != 0 && sort_pid != 0) {
-                    read_pipe += 2;
-                    write_pipe += 2;
-                    pager(&pipes[read_pipe]);
-                    fprintf(stderr, "started pager");
-                    waitpid(printenv_pid, &status, 0);
-                    waitpid(sort_pid, &status, 0);
-                }
-            }
-        /*}*/
+
+    if(parameters.size > 1) {
+    	increment_pipes(&read_pipe, &write_pipe);
+
+    	if ((grep_pid = fork()) == 0) {
+			grep(&pipes[read_pipe], &pipes[write_pipe], parameters.array);
+		}
+	}
+
+	increment_pipes(&read_pipe, &write_pipe);
+	if ((sort_pid = fork()) == 0) {
+		sort(&pipes[read_pipe], &pipes[write_pipe]);
     }
+
+	increment_pipes(&read_pipe, &write_pipe);
+	if ((pager_pid = fork()) == 0) {	
+        pager(&pipes[read_pipe]);
+    }
+
+	close_pipes();
+	waitpid(printenv_pid, &status, 0);
+
+	if (parameters.size > 1) {
+		waitpid(sort_pid, &status, 0);
+	}
+
+	waitpid(sort_pid, &status, 0);
+    waitpid(pager_pid, &status, 0);
+
     return true;
 }
 
 void printenv(int outpipe[2]){
-    dup2(outpipe[WRITE], STDOUT_FILENO);
-    /*close_pipes();*/
-    fprintf(stderr, "started printenv");
+    dup2(outpipe[WRITE], STDOUT_FILENO);    
+    close_pipes();
     if (execlp("printenv", "printenv", NULL) == -1) {
         printf("Failed to start printenv: %s\n", strerror(errno));
         exit(1);
@@ -67,7 +72,6 @@ void grep (int inpipe[2], int outpipe[2], char** arguments){
     dup2(inpipe[READ], STDIN_FILENO);
     dup2(outpipe[WRITE], STDOUT_FILENO);
     close_pipes();
-    fprintf(stderr, "started sort");
     if (execvp("grep", arguments) == -1) {
         fprintf(stderr, "Failed to start sort: %s\n", strerror(errno));
         exit(1);
@@ -126,4 +130,9 @@ void initiate_pipes(int number_of_pipes) {
         pipes[5] = -1;
     }
     pipes[6] = -1;
+}
+
+void increment_pipes(int *read_pipe, int *write_pipe) {
+	*read_pipe += 2;
+	*write_pipe += 2;
 }
