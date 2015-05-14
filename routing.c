@@ -14,7 +14,6 @@ bool route_command(char *args[], int size, bool background){
 
     if (size > 0){
         first_arg = args[0];
-        fprintf(stderr, "%s\n", first_arg);
         if (!strcmp(first_arg, "exit")) {
             exit = true;
         } else if (!strcmp(first_arg, "cd")) {
@@ -57,7 +56,7 @@ bool contains_ampersand(char *args[], int size) {
 
     for (i = 0; i < stringLength; ++i) {
         if (lastArg[i] == '&' && lastArg[i+1] == '\0') {
-            if (size == 1)
+            if (stringLength == 1)
                 args[size - 1] = NULL;
             else
                 lastArg[i] = '\0';
