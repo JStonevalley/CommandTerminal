@@ -17,8 +17,6 @@ bool checkEnv(struct string_array parameters){
     write_pipe = 0;
     if (parameters.size > 1){
         initiate_pipes(3);
-        puts(parameters.array[0]);
-        puts(parameters.array[1]);
     }
     else{
         initiate_pipes(2);
