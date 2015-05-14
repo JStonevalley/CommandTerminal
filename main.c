@@ -13,7 +13,7 @@ int main() {
 	bool exit;
 	int nbytes;
 	char input[100];
-	char *args[10];
+	char *args[20];
 	int size;
 	bool background = false;
 

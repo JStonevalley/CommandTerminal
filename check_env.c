@@ -26,6 +26,9 @@ bool checkEnv(char *args[], int size){
 
 	if ((printenv_pid = fork()) == 0) {
 		printenv(&pipes[write_pipe]);
+	} else if (printenv_pid == -1) {
+		fprintf(stderr, "Error forking: %d\n", errno);
+		return false;
 	}
 
 	if(size > 1) {
@@ -33,28 +36,41 @@ bool checkEnv(char *args[], int size){
 
 		if ((grep_pid = fork()) == 0) {
 			grep(&pipes[read_pipe], &pipes[write_pipe], args);
+		} else if (grep_pid == -1) {
+			fprintf(stderr, "Error forking: %d\n", errno);
+			return false;
 		}
 	}
 
 	increment_pipes(&read_pipe, &write_pipe);
 	if ((sort_pid = fork()) == 0) {
 		sort(&pipes[read_pipe], &pipes[write_pipe]);
+	} else if (sort_pid == -1) {
+		fprintf(stderr, "Error forking: %d\n", errno);
+		return false;
 	}
 
 	increment_pipes(&read_pipe, &write_pipe);
 	if ((pager_pid = fork()) == 0) {	
 		pager(&pipes[read_pipe]);
+	} else if (pager_pid == -1) {
+		fprintf(stderr, "Error forking: %d\n", errno);
+		return false;
 	}
 
 	close_pipes();
-	waitpid(printenv_pid, &status, 0);
+	if(waitpid(printenv_pid, &status, 0) == -1)
+		fprintf(stderr, "Error waiting: %d\n", errno);
 
 	if (size > 1) {
-		waitpid(sort_pid, &status, 0);
+		if(waitpid(grep_pid, &status, 0) == -1)
+			fprintf(stderr, "Error waiting: %d\n", errno);
 	}
 
-	waitpid(sort_pid, &status, 0);
-	waitpid(pager_pid, &status, 0);
+	if(waitpid(sort_pid, &status, 0) == -1)
+		fprintf(stderr, "Error waiting: %d\n", errno);
+	if(waitpid(pager_pid, &status, 0) == -1)
+		fprintf(stderr, "Error waiting: %d\n", errno);
 
 	return true;
 }
@@ -72,8 +88,12 @@ void grep (int inpipe[2], int outpipe[2], char** arguments){
 	dup2(inpipe[READ], STDIN_FILENO);
 	dup2(outpipe[WRITE], STDOUT_FILENO);
 	close_pipes();
+	fprintf(stderr, "args[0] = %s\n", arguments[0]);
+	fprintf(stderr, "args[1] = %s\n", arguments[1]);
+	fprintf(stderr, "args[2] = %s\n", arguments[2]);
+
 	if (execvp("grep", arguments) == -1) {
-		fprintf(stderr, "Failed to start sort: %s\n", strerror(errno));
+		fprintf(stderr, "Failed to start grep: %s\n", strerror(errno));
 		exit(1);
 	}
 }

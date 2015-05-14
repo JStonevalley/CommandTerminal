@@ -26,7 +26,8 @@ void foreground_process(char *file, char **args){
     } else {
         /* In parent process */
         gettimeofday(&tv1, NULL); /* mark start time */
-        waitpid(pid, &status, 0);
+        if(waitpid(pid, &status, 0) == -1)
+            fprintf(stderr, "Error waiting: %d\n", errno);
         gettimeofday(&tv2, NULL); /* mark end time */
 
         printf ("Total time = %f seconds\n",

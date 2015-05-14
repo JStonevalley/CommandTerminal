@@ -24,7 +24,10 @@ void register_sig_handler() {
 void register_ctrlc_handler() {
     struct sigaction sa;
     sa.sa_handler = &handle_ctrlc;
-    sigaction(SIGINT, &sa, NULL);
+    if (sigaction(SIGINT, &sa, NULL) == -1) {
+        perror(0);
+        exit(1);
+    }
 }
 
 /* wait for children and print out pid */
