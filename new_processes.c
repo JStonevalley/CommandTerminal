@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <errno.h>
@@ -34,16 +35,14 @@ void foreground_process(char *file, char **args){
 
 void background_process(char *file, char **args){
     pid_t pid;
-    /* int status; */
 
     if ((pid = fork()) == 0) {
+        sighold(SIGINT); /* don't exit on CTRL+C */
         /* In child process */
         if (execvp(file, args) == -1) {
             printf("Failed to start: %s\n", strerror(errno));
             exit(1);
         }
         exit(0);
-    } else {
-        /* Lalalalalala */
     }
 }
