@@ -48,6 +48,8 @@ void tokenize_string(char* input, char *args[], int *size, bool *background) {
     args[*size] = NULL; /* null terminate array */
 }
 
+/* 	finds and sanetized the arguments from '&' 
+	returns true iff it finds a '&'  */
 bool contains_ampersand(char *args[], int size) {
     char *lastArg = args[size - 1];
     int stringLength = strlen(lastArg);
