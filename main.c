@@ -13,7 +13,6 @@ int main() {
     struct string_array tokens;
 
     register_sig_handler();
-    register_ctrlc_handler();
 
     nbytes = 100;
     exit = false;
