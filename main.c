@@ -9,18 +9,21 @@
 int main() {
     bool exit;
     int nbytes;
-    char command_string[100];
-    struct string_array tokens;
+    char input[100];
+    char *args[10];
+    int size = 0;
+    bool background = false;
 
     register_sig_handler();
 
     nbytes = 100;
     exit = false;
+    
     while(!exit){
         type_prompt();
-        fgets(command_string, nbytes, stdin);
-        tokens = tokenizeString(command_string);
-        exit = route_command(tokens);
+        fgets(input, nbytes, stdin);
+        tokenize_string(input, args, &size, &background);
+        exit = route_command(args, size, background);
     }
     return 0;
 }

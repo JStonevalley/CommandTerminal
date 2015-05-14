@@ -6,16 +6,18 @@
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
+
 #include "check_env.h"
 
 int pipes[7];
 
-bool checkEnv(struct string_array parameters){
+bool checkEnv(char *args[], int size){
     pid_t printenv_pid, grep_pid, sort_pid, pager_pid;
     int status, read_pipe, write_pipe;
     read_pipe = -2,
     write_pipe = 0;
-    if (parameters.size > 1){
+
+    if (size > 1){
         initiate_pipes(3);
     }
     else{
@@ -26,11 +28,11 @@ bool checkEnv(struct string_array parameters){
         printenv(&pipes[write_pipe]);
     }
 
-    if(parameters.size > 1) {
+    if(size > 1) {
     	increment_pipes(&read_pipe, &write_pipe);
 
     	if ((grep_pid = fork()) == 0) {
-			grep(&pipes[read_pipe], &pipes[write_pipe], parameters.array);
+			grep(&pipes[read_pipe], &pipes[write_pipe], args);
 		}
 	}
 
@@ -47,7 +49,7 @@ bool checkEnv(struct string_array parameters){
 	close_pipes();
 	waitpid(printenv_pid, &status, 0);
 
-	if (parameters.size > 1) {
+	if (size > 1) {
 		waitpid(sort_pid, &status, 0);
 	}
 

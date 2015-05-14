@@ -7,79 +7,59 @@
 #include "new_processes.h"
 #include "check_env.h"
 
-bool route_command(struct string_array parameters){
-    char *first_parameter;
+bool route_command(char *args[], int size, bool background){
     bool exit;
+    char *first_arg;
     exit = false;
 
-    if (parameters.size > 0){
-        first_parameter = parameters.array[0];
-        if (!strcmp(first_parameter, "exit")) {
+    if (size > 0){
+        first_arg = args[0];
+        fprintf(stderr, "%s\n", first_arg);
+        if (!strcmp(first_arg, "exit")) {
             exit = true;
-        } else if (!strcmp(first_parameter, "cd")) {
-            parameters.array++;
-            parameters.size--;
-            cd(parameters);
-        } else if (!strcmp(first_parameter, "checkEnv")) {
-            checkEnv(parameters);
-        } else if (parameters.array[parameters.size - 1][strlen(parameters.array[parameters.size - 1]) - 1] == '&') {
-            parameters.array[parameters.size - 1] = NULL;
-            parameters.size--;
-            background_process(first_parameter, parameters.array);
+        } else if (!strcmp(first_arg, "cd")) {
+            cd(args[1]);
+        } else if (!strcmp(first_arg, "checkEnv")) {
+            checkEnv(args, size);
+        } else if (background) {
+            background_process(first_arg, args);
         } else {
-            foreground_process(first_parameter, parameters.array);
+            foreground_process(first_arg, args);
         }
     }
     
     return exit;
 }
 
-struct string_array tokenizeString(char *command_string){
-    char **string_tokens = NULL;
-    struct string_array array;
-    int tokens;
-    char *token;
-    char *prev_token = "";
-    
-    tokens = 0;
-    token = strtok(command_string, " \n");
+void tokenize_string(char* input, char *args[], int *size, bool *background) {
+    char *arg;
+    *size = 0;
 
-    while (token != NULL){
-        string_tokens = realloc(string_tokens, sizeof(char*) * (++tokens));
-        string_tokens[tokens - 1] = token;
-        prev_token = token;
-        token = strtok(NULL, " \n");
+    arg = strtok(input, " \n");
+    while (arg != NULL) {
+    	args[*size] = arg;
+        arg = strtok(NULL, " \n");
+        (*size)++;
     }
 
-    if (contains_ampersand(prev_token))
-    {
-        size_t length = strlen(prev_token);
-        if (length > 1) /* skip "&" */
-        {
-            prev_token[length - 1] = '\0';
-            string_tokens[tokens - 1] = prev_token;
-            /* put a & at the end */
-            string_tokens = realloc(string_tokens, sizeof(char*) * (++tokens));
-            string_tokens[tokens - 1] = "&";
-        }
+    if (*size > 0) {
+        *background = contains_ampersand(args, *size);
     }
-
-    string_tokens = realloc(string_tokens, sizeof(char*) * (tokens + 1));
-    string_tokens[tokens] = NULL;
-
-    array.size = tokens;
-    array.array = string_tokens;
-    return array;
+    args[*size] = NULL; /* null terminate array */
 }
 
-bool contains_ampersand(char *string) {
-    int length = strlen(string);
+bool contains_ampersand(char *args[], int size) {
+    char *lastArg = args[size - 1];
+    int stringLength = strlen(lastArg);
     int i;
 
-    for (i = 0; i < length; ++i)
-    {
-        if (string[i] == '&' && string[i+1] == '\0')
-        {
+    for (i = 0; i < stringLength; ++i) {
+        if (lastArg[i] == '&' && lastArg[i+1] == '\0') {
+            if (size == 1)
+                args[size - 1] = NULL;
+            else
+                lastArg[i] = '\0';
+
             return true;
         }
     }
