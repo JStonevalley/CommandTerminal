@@ -10,7 +10,10 @@
 #include "check_env.h"
 
 int pipes[7];
-
+/*
+	Executes the checkEnv command by using the global variable
+	pipes to pass data between processes.
+*/
 bool checkEnv(char *args[], int size){
 	pid_t printenv_pid, sort_pid, pager_pid, grep_pid = 0;
 	int status, read_pipe, write_pipe;
@@ -51,7 +54,7 @@ bool checkEnv(char *args[], int size){
 	}
 
 	increment_pipes(&read_pipe, &write_pipe);
-	if ((pager_pid = fork()) == 0) {	
+	if ((pager_pid = fork()) == 0) {
 		pager(&pipes[read_pipe]);
 	} else if (pager_pid == -1) {
 		fprintf(stderr, "Error forking: %d\n", errno);
@@ -74,16 +77,22 @@ bool checkEnv(char *args[], int size){
 
 	return true;
 }
-
+/*
+	Executes the printenv call.
+	Writes data to outpipe.
+*/
 void printenv(int outpipe[2]){
-	dup2(outpipe[WRITE], STDOUT_FILENO);    
+	dup2(outpipe[WRITE], STDOUT_FILENO);
 	close_pipes();
 	if (execlp("printenv", "printenv", NULL) == -1) {
 		printf("Failed to start printenv: %s\n", strerror(errno));
 		exit(1);
 	}
 }
-
+/*
+	Executes the grep call with arguments in the arguments parameter.
+	Reads data from inpipe and writes data to outpipe.
+*/
 void grep (int inpipe[2], int outpipe[2], char** arguments){
 	dup2(inpipe[READ], STDIN_FILENO);
 	dup2(outpipe[WRITE], STDOUT_FILENO);
@@ -97,7 +106,10 @@ void grep (int inpipe[2], int outpipe[2], char** arguments){
 		exit(1);
 	}
 }
-
+/*
+	Executes the sort call.
+	Reads data from inpipe and writes data to outpipe.
+*/
 void sort(int inpipe[2], int outpipe[2]){
 	dup2(inpipe[READ], STDIN_FILENO);
 	dup2(outpipe[WRITE], STDOUT_FILENO);
@@ -107,7 +119,10 @@ void sort(int inpipe[2], int outpipe[2]){
 		exit(1);
 	}
 }
-
+/*
+	Executes a PAGER call which is based on the "PAGER" environment variable.
+	Reads data from inpipe and writes to stdout.
+*/
 void pager(int inpipe[2]){
 	char *pager = getenv("PAGER");
 	dup2(inpipe[READ], STDIN_FILENO);
@@ -127,7 +142,9 @@ void pager(int inpipe[2]){
 		}
 	}
 }
-
+/*
+	Close all ends of all pipes for the calling process.
+*/
 void close_pipes(){
 	int i = 0;
 	int temp_pipe = pipes[i];
@@ -136,7 +153,10 @@ void close_pipes(){
 		temp_pipe = pipes[++i];
 	}
 }
-
+/*
+	Initiates the global pipes variable with number_of_pipes.
+	Currently only supports 2 or 3 pipes.
+*/
 void initiate_pipes(int number_of_pipes) {
 
 	if (-1 == pipe(pipes)){
@@ -162,7 +182,9 @@ void initiate_pipes(int number_of_pipes) {
 	}
 	pipes[6] = -1;
 }
-
+/*
+	Increments two integers which indicate which pipes to use.
+*/
 void increment_pipes(int *read_pipe, int *write_pipe) {
 	*read_pipe += 2;
 	*write_pipe += 2;
