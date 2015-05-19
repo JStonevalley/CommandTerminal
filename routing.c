@@ -54,7 +54,7 @@ void tokenize_string(char* input, char *args[], int *size, bool *background) {
     args[*size] = NULL; /* null terminate array */
 }
 
-/* 	
+/*
     Finds and sanetized the arguments from ampersand (&). 
 	Returns true iff it finds an amptersant (&).
 */
