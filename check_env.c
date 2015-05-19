@@ -12,7 +12,7 @@
 int pipes[7];
 
 bool checkEnv(char *args[], int size){
-	pid_t printenv_pid, grep_pid, sort_pid, pager_pid;
+	pid_t printenv_pid, sort_pid, pager_pid, grep_pid = 0;
 	int status, read_pipe, write_pipe;
 	read_pipe = -2,
 	write_pipe = 0;
