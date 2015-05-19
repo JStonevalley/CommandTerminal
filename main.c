@@ -21,10 +21,10 @@ int main() {
 	#if SIDGET == 1
 		register_sig_handler();
 	#endif
-	
+
 	nbytes = 100;
 	exit = false;
-
+	/* Continue while the user does not require exit */
 	while(!exit){
 		#if SIDGET != 1
 			poll_background();
@@ -37,13 +37,18 @@ int main() {
 	}
 	return 0;
 }
-
+/*
+	Types the working directory followed by a prompt for user input.
+*/
 void type_prompt() {
 	char *directory;
 	directory = getcwd(NULL, 100);
 	printf("%s/ > ", directory);
 }
-
+/*
+	Polls background processes to see if any of them 
+	have exited since the last prompt.
+*/
 void poll_background() {
 	pid_t pid;
 	while ((pid = waitpid((pid_t)(-1), 0, WNOHANG)) > 0) {
