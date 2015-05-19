@@ -7,7 +7,9 @@
 #include <stdlib.h>
 #include "signal_handler.h"
 
-/* register a signal handler that listens to signals from children */
+/* 
+    Register a signal handler that listens to signals from children.
+*/
 void register_sig_handler() {
     struct sigaction sa;
     sa.sa_handler = &handle_sigchld;
@@ -20,7 +22,9 @@ void register_sig_handler() {
     }
 }
 
-/* register a signal handler that listens to interuption signals (CTRL+C) */
+/* 
+    Register a signal handler that listens to interuption signals (CTRL+C).
+*/
 void register_ctrlc_handler() {
     struct sigaction sa;
     sa.sa_handler = &handle_ctrlc;
@@ -30,7 +34,9 @@ void register_ctrlc_handler() {
     }
 }
 
-/* wait for children and print out pid */
+/* 
+    Waits for children to terminate and print out the corresponding pid.
+*/
 void handle_sigchld(int sig) {
     pid_t pid;
     while ((pid = waitpid((pid_t)(-1), 0, WNOHANG)) > 0) {
@@ -38,6 +44,10 @@ void handle_sigchld(int sig) {
     }
 }
 
+/*
+    A dummy signal handler that simply does nothing.
+    Used to swallo SIGINT (CTRL+C).
+*/
 void handle_ctrlc(int sig) {
     printf("\n");
 }
