@@ -24,6 +24,7 @@ int main() {
 
 	nbytes = 100;
 	exit = false;
+
 	/* Continue while the user does not require exit */
 	while(!exit){
 		#if SIDGET != 1
@@ -37,6 +38,7 @@ int main() {
 	}
 	return 0;
 }
+
 /*
 	Types the working directory followed by a prompt for user input.
 */
@@ -45,8 +47,9 @@ void type_prompt() {
 	directory = getcwd(NULL, 100);
 	printf("%s/ > ", directory);
 }
+
 /*
-	Polls background processes to see if any of them 
+	Polls background processes to see if any of them
 	have exited since the last prompt.
 */
 void poll_background() {
