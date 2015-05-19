@@ -12,6 +12,10 @@
 #include <sys/wait.h>
 #include "new_processes.h"
 
+/*
+	Starts a new process in the foreground, i.e peel waits for it to finish.
+	Measure the time taken from start to finish and prints it to stdout.
+*/
 void foreground_process(char *file, char **args){
     pid_t pid;
     int status;
@@ -36,6 +40,10 @@ void foreground_process(char *file, char **args){
     }
 }
 
+/*
+	Starts a new process in the background, i.e peel does not wait for it to finish.
+	Sets a signal mask on the child to ignore SIGINT (CTRL+C).
+*/
 void background_process(char *file, char **args){
     pid_t pid;
 

@@ -7,6 +7,9 @@
 #include "new_processes.h"
 #include "check_env.h"
 
+/*
+    Given a number of arguments route_command executes the correct process.
+*/
 bool route_command(char *args[], int size, bool background){
     bool exit;
     char *first_arg;
@@ -29,6 +32,11 @@ bool route_command(char *args[], int size, bool background){
     return exit;
 }
 
+/*
+    Splits the input into a series of arguments. The number of arguments are put
+    int the variable size and the boolean background is returned as true iff
+    the input ends with an ampersand (&).
+*/
 void tokenize_string(char* input, char *args[], int *size, bool *background) {
     char *arg;
     *size = 0;
@@ -46,8 +54,10 @@ void tokenize_string(char* input, char *args[], int *size, bool *background) {
     args[*size] = NULL; /* null terminate array */
 }
 
-/* 	finds and sanetized the arguments from '&' 
-	returns true iff it finds a '&'  */
+/* 	
+    Finds and sanetized the arguments from ampersand (&). 
+	Returns true iff it finds an amptersant (&).
+*/
 bool contains_ampersand(char *args[], int size) {
     char *lastArg = args[size - 1];
     int stringLength = strlen(lastArg);
